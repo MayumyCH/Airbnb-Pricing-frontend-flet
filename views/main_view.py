@@ -61,7 +61,6 @@ class MainView(ft.Container):
 
     def _handle_map_click(self, lat: float, lon: float):
         self.input_form.update_location(lat, lon)
-        self.page.update()
 
     async def _handle_submit(self, e: ft.ControlEvent):
         self.result_panel.visible = False
