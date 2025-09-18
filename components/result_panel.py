@@ -1,0 +1,96 @@
+
+import flet as ft
+from typing import Dict, Any
+
+def _create_analysis_bar(label: str, value: float, max_value: float, color: str) -> ft.Row:
+    """Helper function to create a competitive analysis bar."""
+    percentage = value / max_value if max_value > 0 else 0
+    return ft.Row(
+        alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+        vertical_alignment=ft.CrossAxisAlignment.CENTER,
+        controls=[
+            ft.Text(label, size=12, width=80),
+            ft.Stack(
+                [
+                    ft.Container(bgcolor="#3C4046", width=200, height=20, border_radius=10),
+                    ft.Container(bgcolor=color, width=200 * percentage, height=20, border_radius=10),
+                ]
+            ),
+            ft.Text(f"${value:.2f}", size=12, weight=ft.FontWeight.BOLD, width=70, text_align=ft.TextAlign.RIGHT),
+        ]
+    )
+
+class ResultPanel(ft.Column):
+    def __init__(self):
+        super().__init__(visible=False, spacing=20, expand=True, scroll=ft.ScrollMode.ADAPTIVE)
+
+        # --- Elementos de la UI que se actualizarán ---
+        self.suggested_price_text = ft.Text(size=32, weight=ft.FontWeight.BOLD)
+        self.percentage_tag = ft.Container(
+            padding=ft.padding.symmetric(vertical=5, horizontal=10),
+            border_radius=ft.border_radius.all(20),
+        )
+        self.justification_list = ft.Column(spacing=10)
+        self.analysis_bars_column = ft.Column(spacing=8)
+
+        self.controls = [
+            ft.Text("Resultado del Análisis 📊", size=20, weight=ft.FontWeight.BOLD),
+            ft.Row([self.suggested_price_text, self.percentage_tag], vertical_alignment=ft.CrossAxisAlignment.CENTER),
+            ft.ExpansionPanelList(
+                expand_icon_color=ft.Colors.BLUE_GREY_300,
+                elevation=0,
+                divider_color=ft.Colors.BLUE_GREY_800,
+                controls=[
+                    ft.ExpansionPanel(
+                        bgcolor="#2D3035",
+                        header=ft.ListTile(title=ft.Text("Justificación del Precio", weight=ft.FontWeight.BOLD)),
+                        content=ft.Container(content=self.justification_list, padding=ft.padding.only(left=15, right=15, bottom=15)),
+                    )
+                ]
+            ),
+            ft.Text("Análisis Competitivo (Vecindario)", size=16, weight=ft.FontWeight.BOLD),
+            self.analysis_bars_column,
+        ]
+
+    def update_data(self, data: Dict[str, Any]):
+        # 1. Precio sugerido y porcentaje
+        price = data.get("suggested_price", 0)
+        percentage = data.get("percentage_vs_average", 0)
+        self.suggested_price_text.value = f"${price:.2f} / noche"
+        
+        is_positive = percentage >= 0
+        self.percentage_tag.content = ft.Text(f"{'+' if is_positive else ''}{percentage:.1f}%", weight=ft.FontWeight.BOLD, color="#FFFFFF")
+        self.percentage_tag.bgcolor = "#38761D" if is_positive else "#990000"
+        self.percentage_tag.border = ft.border.all(1, "#66FF99" if is_positive else "#FF9999")
+
+        # 2. Justificación
+        self.justification_list.controls.clear()
+        for item in data.get("justification", []):
+            is_pos_impact = item["type"] == "positive"
+            self.justification_list.controls.append(
+                ft.Row([
+                    ft.Icon(name=ft.icons.CHECK_CIRCLE, color=ft.Colors.GREEN_ACCENT_400) if is_pos_impact else ft.Icon(name=ft.icons.WARNING, color=ft.Colors.AMBER_ACCENT_400),
+                    ft.Text(f"{item['description']} ({'+' if is_pos_impact else '-'}{abs(item['impact']):.1f}%)"),
+                ])
+            )
+
+        # 3. Análisis competitivo
+        comp_data = data.get("competitive_analysis", {})
+        your_price = comp_data.get("your_price", 0)
+        avg_price = comp_data.get("neighborhood_average", 0)
+        max_price = comp_data.get("neighborhood_max", 1)
+
+        self.analysis_bars_column.controls.clear()
+        self.analysis_bars_column.controls.append(
+            _create_analysis_bar("Tu Precio", your_price, max_price, "#4A90E2") # Azul
+        )
+        self.analysis_bars_column.controls.append(
+            _create_analysis_bar("Promedio", avg_price, max_price, "#7E57C2") # Morado
+        )
+        self.analysis_bars_column.controls.append(
+            _create_analysis_bar("Máximo", max_price, max_price, "#7F8C8D") # Gris
+        )
+
+        self.visible = True
+        self.update()
+
