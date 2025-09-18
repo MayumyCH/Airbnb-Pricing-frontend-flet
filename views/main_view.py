@@ -69,6 +69,7 @@ class MainView(ft.Container):
         self.page.update()
 
         form_data = self.input_form.get_data()
+        print(f"Form data submitted: {form_data}") # <-- DEBUG
         api_response = await api_client.get_price_suggestion(form_data)
 
         if "error" in api_response:

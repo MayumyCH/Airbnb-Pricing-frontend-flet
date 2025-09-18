@@ -43,9 +43,9 @@ class InputForm(ft.Column):
             self.submit_button,
         ]
 
-    def _handle_submit_click(self, e):
+    async def _handle_submit_click(self, e):
         if not self._is_disabled:
-            self.on_submit_callback(e)
+            await self.on_submit_callback(e)
 
     def _update_button_style(self):
         if self._is_disabled:
