@@ -11,6 +11,7 @@ def main(page: ft.Page):
     page.window_height = 800
     page.vertical_alignment = ft.MainAxisAlignment.START
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
+    page.scroll = ft.ScrollMode.AUTO
 
     # --- Cargar la vista principal ---
     main_view = MainView(page)

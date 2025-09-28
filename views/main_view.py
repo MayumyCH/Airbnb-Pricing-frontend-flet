@@ -6,9 +6,9 @@ from services import api_client
 
 class MainView(ft.Container):
     def __init__(self, page: ft.Page):
-        super().__init__(expand=True, padding=ft.padding.all(20))
+        # El contenedor principal ya no se expande, para permitir el scroll de la página
+        super().__init__(padding=ft.padding.all(20))
         self.page = page
-        self.page.on_resize = self.on_resize
 
         # --- Instancias de los componentes ---
         self.map_view = MapView(on_map_click=self._handle_map_click)
@@ -25,73 +25,47 @@ class MainView(ft.Container):
         self.result_container.visible = False
 
         # --- Contenedor para el formulario y los resultados ---
-        # Este Column se expandirá gracias a su padre, el right_panel_container
         self.right_panel_content = ft.Column([
             self.input_form,
             self.result_container
         ], spacing=20, scroll=ft.ScrollMode.AUTO)
 
-        # --- Contenedores de layout (los que se moverán) ---
-        self.map_container = ft.Container(self.map_view, expand=True, padding=ft.padding.all(10))
-        self.right_panel_container = ft.Container(self.right_panel_content, expand=True, padding=ft.padding.all(20))
-        self.divider = ft.VerticalDivider(width=1)
-
-        # --- Layout Principal (será un Row o Column) ---
-        # Lo inicializamos como un control vacío que se llenará en on_resize
-        self.main_layout = ft.Container(expand=True)
+        # --- Layout Principal Responsivo ---
+        self.main_layout = ft.ResponsiveRow(
+            controls=[
+                ft.Container(
+                    content=self.map_view,
+                    padding=ft.padding.all(10),
+                    height=350, # Altura fija para el mapa
+                    col={"xs": 12, "md": 6, "lg": 6}
+                ),
+                ft.Container(
+                    content=self.right_panel_content,
+                    padding=ft.padding.all(20),
+                    col={"xs": 12, "md": 6, "lg": 6}
+                ),
+            ],
+            # ResponsiveRow ya no se expande para que la página pueda hacer scroll
+        )
 
         # --- Card principal ---
         self.main_card = ft.Card(
             elevation=8,
             color="#2D3035",
             content=self.main_layout,
-            expand=True # Asegurar que la tarjeta se expanda
+            # La Card ya no se expande para permitir el scroll
         )
 
-        # --- Layout Principal ---
+        # --- Layout de la Vista ---
         self.content = ft.Column(
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
             controls=[
-                ft.Text("Estimador de Precios Airbnb", style=ft.TextThemeStyle.HEADLINE_LARGE, weight=ft.FontWeight.BOLD),
-                ft.Text("Usa IA para encontrar el precio óptimo para tu propiedad", style=ft.TextThemeStyle.HEADLINE_SMALL, color=ft.Colors.BLUE_GREY_400),
+                ft.Text("Estimador de Precios Airbnb", theme_style=ft.TextThemeStyle.HEADLINE_LARGE, weight=ft.FontWeight.BOLD),
+                ft.Text("Usa IA para encontrar el precio óptimo para tu propiedad", theme_style=ft.TextThemeStyle.HEADLINE_SMALL, color=ft.Colors.BLUE_GREY_400),
                 ft.Divider(),
                 self.main_card
             ]
         )
-        
-        self._initialized = False
-        # Llamada inicial para establecer el layout correcto al arrancar
-        self.on_resize(None)
-        self._initialized = True
-
-    def on_resize(self, e):
-        # Si la página aún no tiene ancho, no hacer nada
-        if self.page.width is None:
-            return
-
-        is_desktop = self.page.width >= 800
-        current_layout_is_row = isinstance(self.main_layout.content, ft.Row)
-
-        # Solo reconstruir si el tipo de layout necesita cambiar
-        if is_desktop and not current_layout_is_row:
-            self.main_layout.content = ft.Row(
-                controls=[
-                    self.map_container,
-                    self.divider,
-                    self.right_panel_container
-                ],
-                vertical_alignment=ft.CrossAxisAlignment.START
-            )
-        elif not is_desktop and (current_layout_is_row or self.main_layout.content is None):
-            self.main_layout.content = ft.Column(
-                controls=[
-                    self.map_container,
-                    self.right_panel_container
-                ]
-            )
-        
-        if self._initialized:
-            self.update()
 
     def _handle_map_click(self, lat: float, lon: float):
         self.input_form.update_location(lat, lon)

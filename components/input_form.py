@@ -4,7 +4,7 @@ from typing import Callable
 
 class InputForm(ft.Column):
     def __init__(self, on_submit: Callable):
-        super().__init__(spacing=15, expand=True)
+        super().__init__(spacing=15)
         self.on_submit_callback = on_submit
         self._is_disabled = True
 
