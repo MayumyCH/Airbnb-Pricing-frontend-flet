@@ -6,6 +6,8 @@ from flet_map import (
     MarkerLayer,
     MapLatitudeLongitude,
     TileLayer,
+    PolygonMarker,
+    PolygonLayer,
     MapInteractionConfiguration,
     MapInteractiveFlag,
 )
@@ -24,9 +26,26 @@ class MapView(ft.Container):
                     url_template="https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                 ),
                 self.marker_layer,
+                PolygonLayer(
+                    polygons=[
+                        PolygonMarker(
+                            #label="Área de Sevilla",
+                            color=ft.Colors.with_opacity(0.2, ft.Colors.BLUE_GREY),
+                            border_stroke_width=2,
+                            border_color=ft.Colors.BLUE_GREY_800,
+                            # Define las 4 esquinas para enmarcar Sevilla
+                            coordinates=[
+                                MapLatitudeLongitude(37.44, -6.04),  # Esquina Superior Izquierda
+                                MapLatitudeLongitude(37.44, -5.92),  # Esquina Superior Derecha
+                                MapLatitudeLongitude(37.33, -5.92),  # Esquina Inferior Derecha
+                                MapLatitudeLongitude(37.33, -6.04),  # Esquina Inferior Izquierda
+                            ],
+                        ),
+                    ],
+                ),
             ],
-            initial_center=MapLatitudeLongitude(37.38, -5.97), # Centro en Sevilla
-            initial_zoom=13, # Un zoom más cercano para Sevilla
+            initial_center=MapLatitudeLongitude(37.3891, -5.9845), # Centro en Sevilla
+            initial_zoom=12, # Un zoom más cercano para Sevilla
             interaction_configuration=MapInteractionConfiguration(
                 flags=MapInteractiveFlag.ALL
             ),

@@ -19,10 +19,10 @@ class InputForm(ft.Column):
         # --- Campos del formulario ---
         self.lat_field = ft.TextField(label="Latitud", read_only=True, **textfield_style)
         self.lon_field = ft.TextField(label="Longitud", read_only=True, **textfield_style)
-        self.guests_field = ft.TextField(label="Huéspedes", value="2", keyboard_type=ft.KeyboardType.NUMBER, **textfield_style)
-        self.rooms_field = ft.TextField(label="Habitaciones", value="1", keyboard_type=ft.KeyboardType.NUMBER, **textfield_style)
-        self.beds_field = ft.TextField(label="Camas", value="1", keyboard_type=ft.KeyboardType.NUMBER, **textfield_style)
-        self.nights_field = ft.TextField(label="Noches", value="3", keyboard_type=ft.KeyboardType.NUMBER, **textfield_style)
+        self.guests_field = ft.TextField(label="Nº Huéspedes", value="2", keyboard_type=ft.KeyboardType.NUMBER, **textfield_style)
+        self.rooms_field = ft.TextField(label="Nº Habitaciones", value="1", keyboard_type=ft.KeyboardType.NUMBER, **textfield_style)
+        self.beds_field = ft.TextField(label="Nº Camas", value="1", keyboard_type=ft.KeyboardType.NUMBER, **textfield_style)
+        self.nights_field = ft.TextField(label="Nº Noches", value="3", keyboard_type=ft.KeyboardType.NUMBER, **textfield_style)
 
         # --- Botón de envío ---
         self.submit_button = ft.Container(
@@ -37,9 +37,18 @@ class InputForm(ft.Column):
 
         self.controls = [
             ft.Text("Detalles de la Propiedad ✨", size=20, weight=ft.FontWeight.BOLD),
-            ft.Row([self.lat_field, self.lon_field], spacing=10),
-            ft.Row([self.guests_field, self.rooms_field], spacing=10),
-            ft.Row([self.beds_field, self.nights_field], spacing=10),
+            ft.Row([
+                ft.Container(self.lat_field, expand=True),
+                ft.Container(self.lon_field, expand=True)
+            ], spacing=10),
+            ft.Row([
+                ft.Container(self.guests_field, expand=True),
+                ft.Container(self.rooms_field, expand=True)
+            ], spacing=10),
+            ft.Row([
+                ft.Container(self.beds_field, expand=True),
+                ft.Container(self.nights_field, expand=True)
+            ], spacing=10),
             self.submit_button,
         ]
 

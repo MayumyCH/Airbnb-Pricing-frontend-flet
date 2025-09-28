@@ -1,4 +1,3 @@
-
 import flet as ft
 from components.map_view import MapView
 from components.input_form import InputForm
@@ -9,6 +8,7 @@ class MainView(ft.Container):
     def __init__(self, page: ft.Page):
         super().__init__(expand=True, padding=ft.padding.all(20))
         self.page = page
+        self.page.on_resize = self.on_resize
 
         # --- Instancias de los componentes ---
         self.map_view = MapView(on_map_click=self._handle_map_click)
@@ -25,20 +25,20 @@ class MainView(ft.Container):
         self.result_container.visible = False
 
         # --- Contenedor para el formulario y los resultados ---
+        # Este Column se expandirá gracias a su padre, el right_panel_container
         self.right_panel_content = ft.Column([
             self.input_form,
             self.result_container
-        ], spacing=20, scroll=ft.ScrollMode.AUTO) # Permitir scroll si el contenido excede
+        ], spacing=20, scroll=ft.ScrollMode.AUTO)
 
-        # --- Layout Principal en Fila ---
-        self.main_layout = ft.Row(
-            vertical_alignment=ft.CrossAxisAlignment.START,
-            controls=[
-                ft.Container(self.map_view, expand=1, padding=ft.padding.all(10)),
-                ft.VerticalDivider(width=1),
-                ft.Container(self.right_panel_content, expand=1, padding=ft.padding.all(20)),
-            ]
-        )
+        # --- Contenedores de layout (los que se moverán) ---
+        self.map_container = ft.Container(self.map_view, expand=True, padding=ft.padding.all(10))
+        self.right_panel_container = ft.Container(self.right_panel_content, expand=True, padding=ft.padding.all(20))
+        self.divider = ft.VerticalDivider(width=1)
+
+        # --- Layout Principal (será un Row o Column) ---
+        # Lo inicializamos como un control vacío que se llenará en on_resize
+        self.main_layout = ft.Container(expand=True)
 
         # --- Card principal ---
         self.main_card = ft.Card(
@@ -58,6 +58,40 @@ class MainView(ft.Container):
                 self.main_card
             ]
         )
+        
+        self._initialized = False
+        # Llamada inicial para establecer el layout correcto al arrancar
+        self.on_resize(None)
+        self._initialized = True
+
+    def on_resize(self, e):
+        # Si la página aún no tiene ancho, no hacer nada
+        if self.page.width is None:
+            return
+
+        is_desktop = self.page.width >= 800
+        current_layout_is_row = isinstance(self.main_layout.content, ft.Row)
+
+        # Solo reconstruir si el tipo de layout necesita cambiar
+        if is_desktop and not current_layout_is_row:
+            self.main_layout.content = ft.Row(
+                controls=[
+                    self.map_container,
+                    self.divider,
+                    self.right_panel_container
+                ],
+                vertical_alignment=ft.CrossAxisAlignment.START
+            )
+        elif not is_desktop and (current_layout_is_row or self.main_layout.content is None):
+            self.main_layout.content = ft.Column(
+                controls=[
+                    self.map_container,
+                    self.right_panel_container
+                ]
+            )
+        
+        if self._initialized:
+            self.update()
 
     def _handle_map_click(self, lat: float, lon: float):
         self.input_form.update_location(lat, lon)
