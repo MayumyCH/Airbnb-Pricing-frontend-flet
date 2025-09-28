@@ -53,9 +53,12 @@ python -m venv .venv
 # En Windows (cmd.exe):
 .venv\Scripts\activate
 
+# En Windows (bash):
+source .venv/Scripts/activate
+
 # En macOS y Linux (bash/zsh):
 source .venv/bin/activate
-source .venv/Scripts/activate
+
 ```
 Una vez activado, verás `(.venv)` al principio de la línea de comandos de tu terminal.
 

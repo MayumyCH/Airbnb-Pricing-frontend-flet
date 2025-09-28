@@ -69,7 +69,7 @@ class ResultPanel(ft.Column):
             is_pos_impact = item["type"] == "positive"
             self.justification_list.controls.append(
                 ft.Row([
-                    ft.Icon(name=ft.icons.CHECK_CIRCLE, color=ft.Colors.GREEN_ACCENT_400) if is_pos_impact else ft.Icon(name=ft.icons.WARNING, color=ft.Colors.AMBER_ACCENT_400),
+                    ft.Icon(name=ft.icons.CHECK_CIRCLE, color=ft.Colors.GREEN_ACCENT_400) if is_pos_impact else ft.Icon(name=ft.Icons.WARNING, color=ft.Colors.AMBER_ACCENT_400),
                     ft.Text(f"{item['description']} ({'+' if is_pos_impact else '-'}{abs(item['impact']):.1f}%)"),
                 ])
             )

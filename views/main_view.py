@@ -77,7 +77,10 @@ class MainView(ft.Container):
             self.page.snack_bar.open = True
             self.result_container.visible = False
         else:
-            self.result_panel.update_data(api_response)
+            # Paso 1: Colocar el panel en la página para que se registre
             self.result_container.content = self.result_panel
+            self.page.update()
+            # Paso 2: Ahora que el panel existe en la página, actualizar sus datos
+            self.result_panel.update_data(api_response)
         
         self.page.update()
