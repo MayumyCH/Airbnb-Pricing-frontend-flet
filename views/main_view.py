@@ -13,7 +13,7 @@ class MainView(ft.Container):
         # --- Instancias de los componentes ---
         self.map_view = MapView(on_map_click=self._handle_map_click)
         self.input_form = InputForm(on_submit=self._handle_submit)
-        self.result_panel = ResultPanel()
+        self.result_panel = ResultPanel(on_edit=self._handle_edit_request)
         self.progress_ring = ft.ProgressRing(width=32, height=32, stroke_width=4)
 
         # --- Paneles ---
@@ -31,19 +31,23 @@ class MainView(ft.Container):
         ], spacing=20, scroll=ft.ScrollMode.AUTO)
 
         # --- Layout Principal Responsivo ---
+        self.map_container = ft.Container(
+            content=self.map_view,
+            padding=ft.padding.all(10),
+            height=350, # Altura fija para el mapa
+            col={"xs": 12, "md": 6, "lg": 6},
+            animate_size=ft.Animation(300, ft.AnimationCurve.EASE_IN_OUT)
+        )
+        self.right_panel_container = ft.Container(
+            content=self.right_panel_content,
+            padding=ft.padding.all(20),
+            col={"xs": 12, "md": 6, "lg": 6},
+            animate_size=ft.Animation(300, ft.AnimationCurve.EASE_IN_OUT)
+        )
         self.main_layout = ft.ResponsiveRow(
             controls=[
-                ft.Container(
-                    content=self.map_view,
-                    padding=ft.padding.all(10),
-                    height=350, # Altura fija para el mapa
-                    col={"xs": 12, "md": 6, "lg": 6}
-                ),
-                ft.Container(
-                    content=self.right_panel_content,
-                    padding=ft.padding.all(20),
-                    col={"xs": 12, "md": 6, "lg": 6}
-                ),
+                self.map_container,
+                self.right_panel_container,
             ],
             # ResponsiveRow ya no se expande para que la página pueda hacer scroll
         )
@@ -90,5 +94,17 @@ class MainView(ft.Container):
             self.page.update()
             # Paso 2: Ahora que el panel existe en la página, actualizar sus datos
             self.result_panel.update_data(api_response)
+            # Expandir el mapa y reducir el panel de resultados
+            self.map_container.col = {"xs": 12, "md": 8, "lg": 8}
+            self.map_container.height = 500 # Aumentar la altura del mapa
+            self.right_panel_container.col = {"xs": 12, "md": 4, "lg": 4}
         
+        self.page.update()
+
+    def _handle_edit_request(self, e: ft.ControlEvent):
+        # Restaurar el layout original
+        self.map_container.col = {"xs": 12, "md": 6, "lg": 6}
+        self.map_container.height = 350
+        self.right_panel_container.col = {"xs": 12, "md": 6, "lg": 6}
+        self.result_container.visible = False
         self.page.update()

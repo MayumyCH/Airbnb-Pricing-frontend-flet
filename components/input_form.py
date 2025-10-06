@@ -19,10 +19,10 @@ class InputForm(ft.Column):
         # --- Campos del formulario ---
         self.lat_field = ft.TextField(label="Latitud", read_only=True, **textfield_style)
         self.lon_field = ft.TextField(label="Longitud", read_only=True, **textfield_style)
-        self.guests_field = ft.TextField(label="Nº Huéspedes", value="2", keyboard_type=ft.KeyboardType.NUMBER, **textfield_style)
-        self.rooms_field = ft.TextField(label="Nº Habitaciones", value="1", keyboard_type=ft.KeyboardType.NUMBER, **textfield_style)
+        self.accommodates_field = ft.TextField(label="Nº Huéspedes", value="2", keyboard_type=ft.KeyboardType.NUMBER, **textfield_style)
+        self.bedrooms_field = ft.TextField(label="Nº Habitaciones", value="1", keyboard_type=ft.KeyboardType.NUMBER, **textfield_style)
         self.beds_field = ft.TextField(label="Nº Camas", value="1", keyboard_type=ft.KeyboardType.NUMBER, **textfield_style)
-        self.nights_field = ft.TextField(label="Nº Noches", value="3", keyboard_type=ft.KeyboardType.NUMBER, **textfield_style)
+        self.minimum_nights_field = ft.TextField(label="Nº Noches", value="3", keyboard_type=ft.KeyboardType.NUMBER, **textfield_style)
 
         # --- Botón de envío ---
         self.submit_button = ft.Container(
@@ -42,12 +42,12 @@ class InputForm(ft.Column):
                 ft.Container(self.lon_field, expand=True)
             ], spacing=10),
             ft.Row([
-                ft.Container(self.guests_field, expand=True),
-                ft.Container(self.rooms_field, expand=True)
+                ft.Container(self.accommodates_field, expand=True),
+                ft.Container(self.bedrooms_field, expand=True)
             ], spacing=10),
             ft.Row([
                 ft.Container(self.beds_field, expand=True),
-                ft.Container(self.nights_field, expand=True)
+                ft.Container(self.minimum_nights_field, expand=True)
             ], spacing=10),
             self.submit_button,
         ]
@@ -75,9 +75,9 @@ class InputForm(ft.Column):
         return {
             "latitude": float(self.lat_field.value),
             "longitude": float(self.lon_field.value),
-            "guests": int(self.guests_field.value or 0),
-            "rooms": int(self.rooms_field.value or 0),
+            "accommodates": int(self.accommodates_field.value or 0),
+            "bedrooms": int(self.bedrooms_field.value or 0),
             "beds": int(self.beds_field.value or 0),
-            "nights": int(self.nights_field.value or 0),
+            "minimum_nights": int(self.minimum_nights_field.value or 0),
         }
 

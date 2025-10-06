@@ -6,10 +6,10 @@ from typing import List, Dict, Any, TypedDict, Literal
 class ApiRequestBody(TypedDict):
     latitude: float
     longitude: float
-    guests: int
-    rooms: int
+    accommodates: int
+    bedrooms: int
     beds: int
-    nights: int
+    minimum_nights: int
 
 # --- Tipos para la respuesta de la API ---
 class JustificationItem(TypedDict):
