@@ -28,9 +28,10 @@ class ApiResponse(TypedDict):
     justification: List[JustificationItem]
     competitive_analysis: CompetitiveAnalysis
 
+import os
 # URL del endpoint de la API (ajustar si es necesario)
-PRICE_API_URL = "http://127.0.0.1:8000/api/v1/predict"
-AVERAGE_API_URL = "http://127.0.0.1:8000/api/v1/average_price" 
+PRICE_API_URL = os.environ.get("PRICE_API_URL", "http://127.0.0.1:8000/api/v1/predict")
+AVERAGE_API_URL = os.environ.get("AVERAGE_API_URL", "http://127.0.0.1:8000/api/v1/average_price") 
 
 async def get_price_suggestion(data: ApiRequestBody) -> Dict[str, Any]:
     """
