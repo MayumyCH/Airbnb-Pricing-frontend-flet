@@ -29,7 +29,8 @@ class ApiResponse(TypedDict):
     competitive_analysis: CompetitiveAnalysis
 
 # URL del endpoint de la API (ajustar si es necesario)
-API_URL = "http://127.0.0.1:8000/api/v1/predict" 
+PRICE_API_URL = "http://127.0.0.1:8000/api/v1/predict"
+AVERAGE_API_URL = "http://127.0.0.1:8000/api/v1/average_price" 
 
 async def get_price_suggestion(data: ApiRequestBody) -> Dict[str, Any]:
     """
@@ -37,7 +38,7 @@ async def get_price_suggestion(data: ApiRequestBody) -> Dict[str, Any]:
     """
     async with httpx.AsyncClient() as client:
         try:
-            response = await client.post(API_URL, json=data, timeout=20.0)
+            response = await client.post(PRICE_API_URL, json=data, timeout=20.0)
             response.raise_for_status()  # Lanza una excepción para respuestas 4xx/5xx
             return response.json()
         except httpx.ConnectError:
@@ -47,3 +48,18 @@ async def get_price_suggestion(data: ApiRequestBody) -> Dict[str, Any]:
         except Exception as e:
             return {"error": f"Ocurrió un error inesperado: {str(e)}"}
 
+async def get_average_price(data: ApiRequestBody) -> Dict[str, Any]:
+    """
+    Realiza una llamada asíncrona a la API de precios promedio.
+    """
+    async with httpx.AsyncClient() as client:
+        try:
+            response = await client.post(AVERAGE_API_URL, json=data, timeout=20.0)
+            response.raise_for_status()
+            return response.json()
+        except httpx.ConnectError:
+            return {"error": "No se pudo conectar a la API de promedios."}
+        except httpx.HTTPStatusError as e:
+            return {"error": f"Error de la API de promedios: {e.response.status_code} - {e.response.text}"}
+        except Exception as e:
+            return {"error": f"Ocurrió un error inesperado en promedios: {str(e)}"}

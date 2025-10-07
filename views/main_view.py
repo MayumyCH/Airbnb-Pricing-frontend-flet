@@ -1,4 +1,5 @@
 import flet as ft
+import asyncio
 from components.map_view import MapView
 from components.input_form import InputForm
 from components.result_panel import ResultPanel
@@ -82,10 +83,20 @@ class MainView(ft.Container):
 
         form_data = self.input_form.get_data()
         print(f"Form data submitted: {form_data}") # <-- DEBUG
-        api_response = await api_client.get_price_suggestion(form_data)
+        
+        # Ejecutar ambas llamadas a la API en paralelo
+        results = await asyncio.gather(
+            api_client.get_price_suggestion(form_data),
+            api_client.get_average_price(form_data)
+        )
+        api_response, average_response = results
 
         if "error" in api_response:
             self.page.snack_bar = ft.SnackBar(ft.Text(api_response["error"]), bgcolor=ft.Colors.RED_700)
+            self.page.snack_bar.open = True
+            self.result_container.visible = False
+        elif "error" in average_response:
+            self.page.snack_bar = ft.SnackBar(ft.Text(average_response["error"]), bgcolor=ft.Colors.RED_700)
             self.page.snack_bar.open = True
             self.result_container.visible = False
         else:
@@ -93,7 +104,7 @@ class MainView(ft.Container):
             self.result_container.content = self.result_panel
             self.page.update()
             # Paso 2: Ahora que el panel existe en la página, actualizar sus datos
-            self.result_panel.update_data(api_response)
+            self.result_panel.update_data(api_response, average_response)
             # Expandir el mapa y reducir el panel de resultados
             self.map_container.col = {"xs": 12, "md": 8, "lg": 8}
             self.map_container.height = 500 # Aumentar la altura del mapa

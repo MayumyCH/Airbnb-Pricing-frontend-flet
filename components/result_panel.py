@@ -69,7 +69,7 @@ class ResultPanel(ft.Column):
         if self.on_edit_callback:
             self.on_edit_callback(e)
 
-    def update_data(self, data: Dict[str, Any]):
+    def update_data(self, data: Dict[str, Any], average_data: Dict[str, Any]):
         # 1. Precio sugerido y porcentaje
         price = data.get("suggested_price", 0)
         percentage = data.get("percentage_vs_average", 0)
@@ -92,20 +92,21 @@ class ResultPanel(ft.Column):
         #     )
 
         # 3. Análisis competitivo
-        comp_data = data.get("competitive_analysis", {})
-        your_price = comp_data.get("your_price", 0)
-        avg_price = comp_data.get("neighborhood_average", 0)
-        max_price = comp_data.get("neighborhood_max", 1)
+        your_price = data.get("suggested_price", 0)
+        filtered_avg_price = average_data.get("filtered_average_price", 0)
+        global_avg_price = average_data.get("global_average_price", 0)
+
+        max_price = max(your_price, filtered_avg_price, global_avg_price, 1)
 
         self.analysis_bars_column.controls.clear()
         self.analysis_bars_column.controls.append(
             _create_analysis_bar("Tu Precio", your_price, max_price, "#4A90E2") # Azul
         )
         self.analysis_bars_column.controls.append(
-            _create_analysis_bar("Promedio", avg_price, max_price, "#7E57C2") # Morado
+            _create_analysis_bar("Prom. Filtrado", filtered_avg_price, max_price, "#7E57C2") # Morado
         )
         self.analysis_bars_column.controls.append(
-            _create_analysis_bar("Máximo", max_price, max_price, "#7F8C8D") # Gris
+            _create_analysis_bar("Prom. Global", global_avg_price, max_price, "#7F8C8D") # Gris
         )
 
         self.visible = True
