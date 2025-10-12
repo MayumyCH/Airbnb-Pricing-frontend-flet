@@ -1,5 +1,6 @@
 
 import httpx
+import certifi
 from typing import List, Dict, Any, TypedDict, Literal
 
 # --- Tipos para el cuerpo de la solicitud ---
@@ -37,7 +38,7 @@ async def get_price_suggestion(data: ApiRequestBody) -> Dict[str, Any]:
     """
     Realiza una llamada asíncrona a la API de predicción de precios.
     """
-    async with httpx.AsyncClient() as client:
+    async with httpx.AsyncClient(verify=certifi.where()) as client:
         try:
             response = await client.post(PRICE_API_URL, json=data, timeout=20.0)
             response.raise_for_status()  # Lanza una excepción para respuestas 4xx/5xx
@@ -53,7 +54,7 @@ async def get_average_price(data: ApiRequestBody) -> Dict[str, Any]:
     """
     Realiza una llamada asíncrona a la API de precios promedio.
     """
-    async with httpx.AsyncClient() as client:
+    async with httpx.AsyncClient(verify=certifi.where()) as client:
         try:
             response = await client.post(AVERAGE_API_URL, json=data, timeout=20.0)
             response.raise_for_status()

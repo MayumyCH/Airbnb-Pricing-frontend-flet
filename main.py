@@ -1,6 +1,10 @@
+from dotenv import load_dotenv
 import flet as ft
 import flet_map as map
 from views.main_view import MainView
+import os
+
+load_dotenv()
 
 def main(page: ft.Page):
     # --- Configuración de la página ---
@@ -19,8 +23,11 @@ def main(page: ft.Page):
     page.update()
 
 if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 8550))
     ft.app(
         target=main,
+        port=port,
+        host="0.0.0.0",
         assets_dir="assets",
         view=ft.AppView.WEB_BROWSER
     )

@@ -1,4 +1,5 @@
 flet
-flet_desktop
 flet-map
 httpx
+python-dotenv
+certifi

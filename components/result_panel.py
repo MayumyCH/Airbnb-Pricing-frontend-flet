@@ -22,7 +22,7 @@ def _create_analysis_bar(label: str, value: float, max_value: float, color: str)
 
 class ResultPanel(ft.Column):
     def __init__(self, on_edit: Callable):
-        super().__init__(visible=False, spacing=20, expand=True, scroll=ft.ScrollMode.ADAPTIVE)
+        super().__init__(visible=False, spacing=20, scroll=ft.ScrollMode.ADAPTIVE)
         self.on_edit_callback = on_edit
 
         # --- Elementos de la UI que se actualizarán ---

@@ -100,14 +100,10 @@ class MainView(ft.Container):
             self.page.snack_bar.open = True
             self.result_container.visible = False
         else:
-            # Paso 1: Colocar el panel en la página para que se registre
-            self.result_container.content = self.result_panel
-            self.page.update()
-            # Paso 2: Ahora que el panel existe en la página, actualizar sus datos
             self.result_panel.update_data(api_response, average_response)
-            # Expandir el mapa y reducir el panel de resultados
+            self.result_container.content = self.result_panel
             self.map_container.col = {"xs": 12, "md": 8, "lg": 8}
-            self.map_container.height = 500 # Aumentar la altura del mapa
+            self.map_container.height = 500
             self.right_panel_container.col = {"xs": 12, "md": 4, "lg": 4}
         
         self.page.update()

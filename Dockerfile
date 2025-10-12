@@ -1,13 +1,6 @@
 # Usar una imagen base de Python
 FROM python:3.11-slim as base
 
-# Instalar dependencias del sistema y limpiar en un solo paso
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    libgtk-3-0 \
-    gstreamer1.0-plugins-base \
-    libmpv2 \
-    && ln -s /usr/lib/x86_64-linux-gnu/libmpv.so.2 /usr/lib/x86_64-linux-gnu/libmpv.so.1 \
-    && rm -rf /var/lib/apt/lists/*
 
 # Crear un usuario y grupo no-root con un directorio home
 RUN addgroup --system app && adduser --system --group --home /home/app app
@@ -35,4 +28,4 @@ COPY . .
 EXPOSE 8550
 
 # Comando para ejecutar la aplicación
-CMD ["flet", "run", "main.py", "-p", "8550", "-w", "--host", "0.0.0.0"]
+CMD ["python", "-u", "main.py"]
