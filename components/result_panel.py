@@ -16,7 +16,7 @@ def _create_analysis_bar(label: str, value: float, max_value: float, color: str)
                     ft.Container(bgcolor=color, width=200 * percentage, height=20, border_radius=10),
                 ]
             ),
-            ft.Text(f"${value:.2f}", size=12, weight=ft.FontWeight.BOLD, width=70, text_align=ft.TextAlign.RIGHT),
+            ft.Text(f"${value:.1f}", size=12, weight=ft.FontWeight.BOLD, width=70, text_align=ft.TextAlign.RIGHT),
         ]
     )
 
@@ -78,7 +78,7 @@ class ResultPanel(ft.Column):
             percentage = ((price - filtered_avg_price) / filtered_avg_price) * 100
         else:
             percentage = 0
-        self.suggested_price_text.value = f"${price:.2f} / noche"
+        self.suggested_price_text.value = f"${price:.1f} / noche"
         
         is_positive = percentage >= 0
         self.percentage_tag.content = ft.Text(f"{'+' if is_positive else ''}{percentage:.1f}%", weight=ft.FontWeight.BOLD, color="#FFFFFF")
