@@ -2,21 +2,36 @@
 import flet as ft
 from typing import Dict, Any, Callable
 
-def _create_analysis_bar(label: str, value: float, max_value: float, color: str) -> ft.Row:
-    """Helper function to create a competitive analysis bar."""
+def _create_analysis_bar(label: str, value: float, max_value: float, color: str) -> ft.Control:
+    """Crea una barra de análisis con un diseño de columna que funciona en todas las pantallas."""
     percentage = value / max_value if max_value > 0 else 0
-    return ft.Row(
-        alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-        vertical_alignment=ft.CrossAxisAlignment.CENTER,
+    
+    # Ancho fijo para la barra, ya que es un diseño unificado
+    bar_width = 200 
+
+    bar_stack = ft.Stack(
+        [
+            ft.Container(bgcolor="#3C4046", width=bar_width, height=20, border_radius=10),
+            ft.Container(bgcolor=color, width=bar_width * percentage, height=20, border_radius=10),
+        ]
+    )
+    
+    value_text = ft.Text(f"${value:.1f}", size=12, weight=ft.FontWeight.BOLD)
+
+    # Se usa ft.Column para asegurar que el layout sea consistente y responsivo.
+    return ft.Column(
+        spacing=5,
+        horizontal_alignment=ft.CrossAxisAlignment.START,
         controls=[
-            ft.Text(label, size=12, width=80),
-            ft.Stack(
-                [
-                    ft.Container(bgcolor="#3C4046", width=200, height=20, border_radius=10),
-                    ft.Container(bgcolor=color, width=200 * percentage, height=20, border_radius=10),
+            ft.Text(label, size=12),
+            ft.Row(
+                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                vertical_alignment=ft.CrossAxisAlignment.CENTER,
+                controls=[
+                    bar_stack,
+                    value_text,
                 ]
-            ),
-            ft.Text(f"${value:.1f}", size=12, weight=ft.FontWeight.BOLD, width=70, text_align=ft.TextAlign.RIGHT),
+            )
         ]
     )
 
@@ -31,8 +46,7 @@ class ResultPanel(ft.Column):
             padding=ft.padding.symmetric(vertical=5, horizontal=10),
             border_radius=ft.border_radius.all(20),
         )
-        self.justification_list = ft.Column(spacing=10)
-        self.analysis_bars_column = ft.Column(spacing=8)
+        self.analysis_bars_column = ft.Column(spacing=15) # Mayor espaciado vertical
 
         self.edit_button = ft.Container(
             content=ft.Text("Modificar Consulta ✏️", size=14, weight=ft.FontWeight.BOLD),
@@ -46,19 +60,7 @@ class ResultPanel(ft.Column):
 
         self.controls = [
             ft.Text("Resultado del Análisis 📊", size=20, weight=ft.FontWeight.BOLD),
-            ft.Row([self.suggested_price_text, self.percentage_tag], vertical_alignment=ft.CrossAxisAlignment.CENTER),
-            # ft.ExpansionPanelList(
-            #     expand_icon_color=ft.Colors.BLUE_GREY_300,
-            #     elevation=0,
-            #     divider_color=ft.Colors.BLUE_GREY_800,
-            #     controls=[
-            #         ft.ExpansionPanel(
-            #             bgcolor="#2D3035",
-            #             header=ft.ListTile(title=ft.Text("Justificación del Precio", weight=ft.FontWeight.BOLD)),
-            #             content=ft.Container(content=self.justification_list, padding=ft.padding.only(left=15, right=15, bottom=15)),
-            #         )
-            #     ]
-            # ),
+            ft.Row([self.suggested_price_text, self.percentage_tag], vertical_alignment=ft.CrossAxisAlignment.CENTER, wrap=True),
             ft.Text("Análisis Competitivo (Vecindario)", size=16, weight=ft.FontWeight.BOLD),
             self.analysis_bars_column,
             ft.Divider(),
@@ -85,18 +87,7 @@ class ResultPanel(ft.Column):
         self.percentage_tag.bgcolor = "#38761D" if is_positive else "#990000"
         self.percentage_tag.border = ft.border.all(1, "#66FF99" if is_positive else "#FF9999")
 
-        # 2. Justificación
-        # self.justification_list.controls.clear()
-        # for item in data.get("justification", []):
-        #     is_pos_impact = item["type"] == "positive"
-        #     self.justification_list.controls.append(
-        #         ft.Row([
-        #             ft.Icon(name=ft.icons.CHECK_CIRCLE, color=ft.Colors.GREEN_ACCENT_400) if is_pos_impact else ft.Icon(name=ft.Icons.WARNING, color=ft.Colors.AMBER_ACCENT_400),
-        #             ft.Text(f"{item['description']} ({'+' if is_pos_impact else '-'}{abs(item['impact']):.1f}%)"),
-        #         ])
-        #     )
-
-        # 3. Análisis competitivo
+        # 2. Análisis competitivo
         your_price = data.get("suggested_price", 0)
         filtered_avg_price = average_data.get("filtered_average_price", 0)
         global_avg_price = average_data.get("global_average_price", 0)
@@ -105,14 +96,13 @@ class ResultPanel(ft.Column):
 
         self.analysis_bars_column.controls.clear()
         self.analysis_bars_column.controls.append(
-            _create_analysis_bar("Tu Precio", your_price, max_price, "#4A90E2") # Azul
+            _create_analysis_bar("Tu Precio", your_price, max_price, "#4A90E2")
         )
         self.analysis_bars_column.controls.append(
-            _create_analysis_bar("Prom. Filtrado", filtered_avg_price, max_price, "#7E57C2") # Morado
+            _create_analysis_bar("Prom. Filtrado", filtered_avg_price, max_price, "#7E57C2")
         )
         self.analysis_bars_column.controls.append(
-            _create_analysis_bar("Prom. Global", global_avg_price, max_price, "#7F8C8D") # Gris
+            _create_analysis_bar("Prom. Global", global_avg_price, max_price, "#7F8C8D")
         )
 
         self.visible = True
-

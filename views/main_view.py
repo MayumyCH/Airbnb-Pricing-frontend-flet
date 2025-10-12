@@ -82,32 +82,22 @@ class MainView(ft.Container):
         self.page.update()
 
         form_data = self.input_form.get_data()
-        print(f"Form data submitted: {form_data}") # <-- DEBUG
         
-        # Ejecutar ambas llamadas a la API en paralelo
         results = await asyncio.gather(
             api_client.get_price_suggestion(form_data),
             api_client.get_average_price(form_data)
         )
         api_response, average_response = results
 
-        if "error" in api_response:
-            self.page.snack_bar = ft.SnackBar(ft.Text(api_response["error"]), bgcolor=ft.Colors.RED_700)
-            self.page.snack_bar.open = True
-            self.result_container.visible = False
-        elif "error" in average_response:
-            self.page.snack_bar = ft.SnackBar(ft.Text(average_response["error"]), bgcolor=ft.Colors.RED_700)
+        if "error" in api_response or "error" in average_response:
+            error_msg = api_response.get("error") or average_response.get("error")
+            self.page.snack_bar = ft.SnackBar(ft.Text(error_msg), bgcolor=ft.Colors.RED_700)
             self.page.snack_bar.open = True
             self.result_container.visible = False
         else:
-            # Paso 1: Colocar el panel en la página (sigue invisible).
             self.result_container.content = self.result_panel
-            
-            # Paso 2: Ahora que el control existe en la página, actualizar sus datos.
-            # Esto lo hará visible y llenará la información.
             self.result_panel.update_data(api_response, average_response)
 
-            # Paso 3: Ajustar el layout general.
             self.map_container.col = {"xs": 12, "md": 8, "lg": 8}
             self.map_container.height = 500
             self.right_panel_container.col = {"xs": 12, "md": 4, "lg": 4}
@@ -115,7 +105,6 @@ class MainView(ft.Container):
         self.page.update()
 
     def _handle_edit_request(self, e: ft.ControlEvent):
-        # Restaurar el layout original
         self.map_container.col = {"xs": 12, "md": 6, "lg": 6}
         self.map_container.height = 350
         self.right_panel_container.col = {"xs": 12, "md": 6, "lg": 6}
