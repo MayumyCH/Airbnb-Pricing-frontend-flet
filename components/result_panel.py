@@ -72,7 +72,12 @@ class ResultPanel(ft.Column):
     def update_data(self, data: Dict[str, Any], average_data: Dict[str, Any]):
         # 1. Precio sugerido y porcentaje
         price = data.get("suggested_price", 0)
-        percentage = data.get("percentage_vs_average", 0)
+        filtered_avg_price = average_data.get("filtered_average_price", 0)
+
+        if filtered_avg_price > 0:
+            percentage = ((price - filtered_avg_price) / filtered_avg_price) * 100
+        else:
+            percentage = 0
         self.suggested_price_text.value = f"${price:.2f} / noche"
         
         is_positive = percentage >= 0
@@ -110,5 +115,4 @@ class ResultPanel(ft.Column):
         )
 
         self.visible = True
-        self.update()
 

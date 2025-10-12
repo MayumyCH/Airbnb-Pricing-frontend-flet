@@ -62,9 +62,9 @@ class MapView(ft.Container):
         self.marker_layer.markers.append(
             Marker(
                 content=ft.Image(
-                    src="https://raw.githubusercontent.com/fferegrino/cycle-station-predictions/refs/heads/main/frontend/static/location-64.png",
-                    width=40,
-                    height=40,
+                    src="https://raw.githubusercontent.com/MayumyCH/Airbnb-Pricing-frontend-flet/refs/heads/develop/assets/marcadorMapa2.png",
+                    width=100,
+                    height=100,
                 ),
                 coordinates=MapLatitudeLongitude(lat, lon),
             )
