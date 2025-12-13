@@ -2,10 +2,6 @@
 
 Este proyecto es una aplicación de escritorio multiplataforma construida con **Flet** que sirve como frontend para un servicio de estimación de precios de Airbnb. La aplicación permite a los usuarios seleccionar una ubicación en un mapa, ingresar detalles de la propiedad y recibir una sugerencia de precio basada en un modelo de IA a través de una API externa.
 
-La interfaz ha sido diseñada para ser moderna, intuitiva y con un tema oscuro, basándose en las siguientes maquetas de referencia:
-- **Parte 1:** [Diseño Inicial](https://imgur.com/a/DwFay3m)
-- **Parte 2:** [Ubicación Seleccionada](https://imgur.com/a/zMkTayg)
-- **Parte 3:** [Resultados del Análisis](https://imgur.com/a/NNQEqUq)
 
 ## 🚀 Características
 
