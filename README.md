@@ -1,9 +1,18 @@
 # Estimador de Precios Airbnb (Frontend con Flet)
 
+**🌟 Proyecto presentado en la PyConES 2025**
+
 Este proyecto es una aplicación de escritorio multiplataforma construida con **Flet** que sirve como frontend para un servicio de estimación de precios de Airbnb. La aplicación permite a los usuarios seleccionar una ubicación en un mapa, ingresar detalles de la propiedad y recibir una sugerencia de precio basada en un modelo de IA a través de una API externa.
 
+## 🎤 Sobre la Charla (PyConES 2025 - Sevilla España)
 
-## 🚀 Características
+Este proyecto fue parte de mi ponencia **"Más allá del modelo: Presenta tus proyectos Python 🐍 como aplicaciones interactivas con Flet"**. Aquí explico cómo transformar scripts de análisis en productos interactivos.
+
+👉 **[Descargar Presentación Completa (PDF)](https://github.com/MayumyCH/Airbnb-Pricing-frontend-flet/blob/main/assets/PyConES%202025%20-%20Mayumy.pdf)**
+
+
+
+## 🚀 Características del Proyecto
 
 - **Mapa Interactivo**: Selecciona la ubicación de la propiedad con un simple clic.
 - **Formulario Dinámico**: Ingresa detalles como número de huéspedes, habitaciones y noches.
